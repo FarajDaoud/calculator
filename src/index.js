@@ -7,9 +7,8 @@ class Calculator extends React.Component {
         super(props);
         this.state = {
             parts: [],
-            currentInput: undefined, 
-            input: '0',
-            output: '0',
+            lastInput: undefined,
+            lastNumber: '0',
         };
         this.updateCalculator = this.updateCalculator.bind(this);
     }
@@ -17,32 +16,47 @@ class Calculator extends React.Component {
     updateCalculator(event) {
         const param = event.target.innerHTML.toString(); 
         let evaluation = '';
-        let parts = [];
-        let currentInput = this.state.currentInput;
-        let input = this.state.input;
-        let output = this.state.output;
+        let parts = this.state.parts;
+        let lastInput = this.state.lastInput;
+        let lastNumber = this.state.lastNumber;
         switch(param) {
             case '=':
-                evaluation = eval(this.state.input);
-                this.setState({
-                    parts: [evaluation],
-                    currentInput: undefined,
-                    input: evaluation,
-                    output: evaluation,
-                });
+                try {
+                    evaluation = eval(parts.toString().replace(/,/g, ' '));
+                } catch {
+                    this.setState({
+                        parts: ['error'],
+                        lastInput: undefined,
+                        lastNumber: '0',
+                    });
+                }
+                if(evaluation !== undefined){
+                    this.setState({
+                        parts: [evaluation.toString()],
+                        lastInput: undefined,
+                        lastNumber: evaluation.toString(),
+                    });
+                }
                 break;
             case 'AC':
                 this.setState({
                     parts: [],
-                    currentInput: undefined,
-                    input: '0',
-                    output: '0',
+                    lastInput: undefined,
+                    lastNumber: '0',
                 });
                 break;
             case '.':
-                if(this.state.input.indexOf('.') === -1){
+                if(lastNumber.indexOf('.') === -1){
+                    lastNumber += param;
+                    if(lastNumber === '0.'){
+                        parts.push(lastNumber);
+                    }else {
+                        parts[parts.length -1] = lastNumber;
+                    }
                     this.setState({
-                        input: this.state.input + param,
+                        parts: parts,
+                        lastInput: param,
+                        lastNumber: lastNumber,
                     });
                 }
                 break;
@@ -50,38 +64,42 @@ class Calculator extends React.Component {
             case '/':
             case '+':
             case '-':
-                if(currentInput !== undefined){
-                    switch(input[input.length]) {
-                        case '*':
-                        case '/':
-                        case '+':
-                        case '-':
-                            input = input.splice(input.length, 1, param);
-                            parts[parts.length] = param;
-                            break;
-                        default:
-                            parts = parts.concat(currentInput);
-                            parts = parts.concat(param);
-                            break;
-                    }
-                    
-                    this.setState({
-                        parts: parts,
-                        input: input,
-                    });
+                switch(lastInput) {
+                    case '*':
+                    case '/':
+                    case '+':
+                    case '-':
+                        //replace last operator with current operator
+                        parts[parts.length -1] = param;
+                        break;
+                    default:
+                        //add number to parts array.
+                        parts.push(param);
+                        lastNumber = '0';
+                        break;
                 }
+
                 this.setState({
-                    parts: this.state.parts.concat(),
-                    input: this.state.input + param,
+                    parts: parts,
+                    lastInput: param,
+                    lastNumber: lastNumber,
                 });
                 break;
             default:
-                const newInput = this.state.input === '0' ? param : this.state.input + param;
-                
-                evaluation = eval(newInput);
+                //param is a number
+                if(this.state.lastNumber === '0'){
+                    lastNumber = param;
+                    if(lastNumber !== '0'){
+                        parts.push(lastNumber);
+                    }
+                }else{
+                    lastNumber += param;
+                    parts[parts.length -1] = lastNumber;
+                }
                 this.setState({
-                    input: newInput,
-                    output: evaluation,
+                    parts: parts,
+                    lastInput: param,
+                    lastNumber: lastNumber,
                 });
                 break;
         }
@@ -120,8 +138,7 @@ class Calculator extends React.Component {
         return(
             <div id="app-wrapper">
                 <div id="display">
-                    <span id="input">{this.state.input}</span>
-                    <span id="output">{this.state.output}</span>
+                    {this.state.parts.length > 0 ? this.state.parts.toString().replace(/,/g, ' ') : '0'}
                 </div>
                 <div id="button-container">
                     {this.addButtons()}

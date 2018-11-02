@@ -1,5 +1,5 @@
 {
-  "name": "drum-machine",
+  "name": "javascript-calculator",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -22,5 +22,5 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "homepage": "https://farajdaoud.com/subsite/calculator/"
+  "homepage": "https://farajdaoud.com/subsite/javascript-calculator/"
 }

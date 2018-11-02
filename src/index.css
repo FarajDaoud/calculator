@@ -60,12 +60,17 @@ body {
   width: 100%;
   flex-direction: column;
   align-items: center;
+  font-size: x-large;
 }
 
 #display {
   width: 303px;
   height: 78px;
-  border: 1px solid black;
+  border-left: 2px solid black;
+  border-top: 2px solid black;
+  border-right: 2px solid black;
+  background-color: black;
+  color: white;
   padding-right: 15px;
   display: flex;
   flex-direction: column;
@@ -78,6 +83,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   justify-items: center;
+  border: 1px solid black;
 }
 
 .calcButton {
@@ -87,10 +93,13 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: darkcyan;
+  color: white;
 }
 
 #clear {
   width: 158px;
+  background-color: orangered;
 }
 
 #equals {
@@ -100,6 +109,10 @@ body {
 
 #zero {
   width: 158px;
+}
+
+#equals, #multiply, #divide, #subtract, #add{
+  background-color: grey;
 }
 
 
